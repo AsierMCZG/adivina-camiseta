@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adivina la Camiseta</title>
+    <title>Desafío Futbolero ⚽ | Adivina la Camiseta</title>
     <style>
         :root {
             --burgundy: #6b1d2f;
@@ -14,6 +14,7 @@
             --text-light: #f5f5f5;
             --text-muted: #aaaaaa;
             --gold: #ffb703;
+            --green: #2a9d8f;
         }
 
         * {
@@ -113,7 +114,6 @@
             margin-bottom: 0;
         }
 
-        /* Formulario individual dentro de cada pista */
         .answer-box {
             margin-top: 15px;
             padding-top: 15px;
@@ -155,6 +155,13 @@
             background-color: #8c273e;
             transform: translateY(-1px);
         }
+
+        .status-msg {
+            font-size: 0.85rem;
+            text-align: right;
+            margin-top: 4px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -165,23 +172,25 @@
     </header>
 
     <div class="container" id="clues-container">
-        <!-- Las pistas se renderizarán dinámicamente -->
+        <!-- Pistas dinámicas -->
     </div>
 
     <script>
-        const targetEmail = "asiermaka5@gmail.com";
+        // CONFIGURACIÓN DE TELEGRAM (REEMPLAZA CON TUS DATOS)
+        const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; 
+        const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";
 
         const clues = [
             { id: 1, text: "Nuestro primer partido oficial se jugó hace más de un siglo." },
             { id: 2, text: "Aportó 3 jugadores a la Selección Española en los Juegos Olímpicos de 1920." },
-            { id: 3, text: "Su segunda equipación comparte colores con la primera equipación del Aston Villa y del Burnley." },
-            { id: 4, text: "Su estadio municipal actual se construyó sobre un terreno donde había un hipódromo." },
-            { id: 5, text: "Ha eliminado de la Copa del Rey tanto al FC Barcelona como al Real Madrid en eliminatorias a doble partido." },
+            { id: 3, text: "Fue uno de los diez clubes fundadores de Primera División." },
+            { id: 4, text: "Ha ganado la Copa de España antes de que existiera la Liga." },
+            { id: 5, text: "El club pertenece a un entrenador español muy laureado que sigue en activo." },
             { id: 6, text: "Es uno de los clubes españoles que tiene vinculación con un equipo de la Premier League." },
-            { id: 7, text: "El club pertenece a un entrenador español muy laureado que sigue en activo." },
-            { id: 8, text: "Ha ganado la Copa de España antes de que existiera la Liga." },
+            { id: 7, text: "Ha eliminado de la Copa del Rey tanto al FC Barcelona como al Real Madrid en eliminatorias a doble partido." },
+            { id: 8, text: "Su estadio municipal actual se construyó sobre un terreno donde había un hipódromo." },
             { id: 9, text: "Su primera equipación tiene los mismos colores que los del Real Unión." },
-            { id: 10, text: "Fue uno de los diez clubes fundadores de Primera División." }
+            { id: 10, text: "Su segunda equipación comparte colores con la primera equipación del Aston Villa y del Burnley." }
         ];
 
         // Fecha de inicio: 11 de Agosto de 2026
@@ -189,11 +198,7 @@
 
         function renderClues() {
             const container = document.getElementById('clues-container');
-            //const today = new Date();
-            
-            // Para probar el comportamiento simulando días pasados o futuros, 
-            // puedes desmarcar la línea de abajo fijando la fecha que quieras:
-            const today = new Date(2026, 7, 12); 
+            const today = new Date();
 
             const timeDiff = today - startDate;
             const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
@@ -219,8 +224,9 @@
                         </div>
                         <div class="clue-body">${clue.text}</div>
                         <div class="answer-box">
-                            <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué equipo crees que es?" />
-                            <button onclick="sendClueAnswer(${clue.id})">Enviar respuesta 📩</button>
+                            <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué respuesta crees que es?..." />
+                            <button id="btn-clue-${clue.id}" onclick="sendClueAnswerTelegram(${clue.id})">Enviar directo 🚀</button>
+                            <span id="status-clue-${clue.id}" class="status-msg"></span>
                         </div>
                     `;
                 } else {
@@ -240,7 +246,7 @@
             });
         }
 
-        async function sendClueAnswer(clueId) {
+        async function sendClueAnswerTelegram(clueId) {
             const inputField = document.getElementById(`input-clue-${clueId}`);
             const statusMsg = document.getElementById(`status-clue-${clueId}`);
             const btn = document.getElementById(`btn-clue-${clueId}`);
@@ -285,6 +291,7 @@
                 btn.innerText = "Enviar directo 🚀";
             }
         }
+
         renderClues();
     </script>
 </body>
