@@ -176,9 +176,9 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE TELEGRAM (REEMPLAZA CON TUS DATOS)
-        const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN_AQUI"; 
-        const TELEGRAM_CHAT_ID = "TU_CHAT_ID_AQUI";
+        // PON AQUÍ TU TOKEN Y TU CHAT ID ENTRE LAS COMILLAS
+        const TELEGRAM_BOT_TOKEN = "1454004285:AAEM8JAH-AiD4sqMWdJtYkSKPytPWGhHdJo"; 
+        const TELEGRAM_CHAT_ID = "1454004285";
 
         const clues = [
             { id: 1, text: "Nuestro primer partido oficial se jugó hace más de un siglo." },
@@ -197,53 +197,57 @@
         const startDate = new Date(2026, 7, 11); 
 
         function renderClues() {
-            const container = document.getElementById('clues-container');
-            const today = new Date();
+            try {
+                const container = document.getElementById('clues-container');
+                const today = new Date();
 
-            const timeDiff = today - startDate;
-            const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
+                const timeDiff = today - startDate;
+                const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
 
-            clues.forEach((clue, index) => {
-                const unlockDate = new Date(startDate);
-                unlockDate.setDate(startDate.getDate() + index);
+                clues.forEach((clue, index) => {
+                    const unlockDate = new Date(startDate);
+                    unlockDate.setDate(startDate.getDate() + index);
 
-                const isUnlocked = daysPassed >= index;
-                const isToday = daysPassed === index;
+                    const isUnlocked = daysPassed >= index;
+                    const isToday = daysPassed === index;
 
-                const dateString = unlockDate.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const dateString = unlockDate.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-                const card = document.createElement('div');
-                card.className = `clue-card ${isUnlocked ? 'unlocked' : ''} ${isToday ? 'today' : ''}`;
+                    const card = document.createElement('div');
+                    card.className = `clue-card ${isUnlocked ? 'unlocked' : ''} ${isToday ? 'today' : ''}`;
 
-                let contentHtml = '';
-                if (isUnlocked) {
-                    contentHtml = `
-                        <div class="clue-header">
-                            <span class="clue-title">Pista #${clue.id} ${isToday ? '⭐ (NUEVA HOY)' : ''}</span>
-                            <span>${dateString}</span>
-                        </div>
-                        <div class="clue-body">${clue.text}</div>
-                        <div class="answer-box">
-                            <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué respuesta crees que es?..." />
-                            <button id="btn-clue-${clue.id}" onclick="sendClueAnswerTelegram(${clue.id})">Enviar directo 🚀</button>
-                            <span id="status-clue-${clue.id}" class="status-msg"></span>
-                        </div>
-                    `;
-                } else {
-                    contentHtml = `
-                        <div class="clue-header">
-                            <span class="clue-title">Pista #${clue.id}</span>
-                            <span>Disponible el: ${dateString}</span>
-                        </div>
-                        <div class="clue-body locked-content">
-                            🔒 <span>Pista bloqueada. Se desbloquea el ${dateString}</span>
-                        </div>
-                    `;
-                }
+                    let contentHtml = '';
+                    if (isUnlocked) {
+                        contentHtml = `
+                            <div class="clue-header">
+                                <span class="clue-title">Pista #${clue.id} ${isToday ? '⭐ (NUEVA HOY)' : ''}</span>
+                                <span>${dateString}</span>
+                            </div>
+                            <div class="clue-body">${clue.text}</div>
+                            <div class="answer-box">
+                                <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué respuesta crees que es?..." />
+                                <button id="btn-clue-${clue.id}" onclick="sendClueAnswerTelegram(${clue.id})">Enviar directo 🚀</button>
+                                <span id="status-clue-${clue.id}" class="status-msg"></span>
+                            </div>
+                        `;
+                    } else {
+                        contentHtml = `
+                            <div class="clue-header">
+                                <span class="clue-title">Pista #${clue.id}</span>
+                                <span>Disponible el: ${dateString}</span>
+                            </div>
+                            <div class="clue-body locked-content">
+                                🔒 <span>Pista bloqueada. Se desbloquea el ${dateString}</span>
+                            </div>
+                        `;
+                    }
 
-                card.innerHTML = contentHtml;
-                container.appendChild(card);
-            });
+                    card.innerHTML = contentHtml;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Error al renderizar las pistas:", err);
+            }
         }
 
         async function sendClueAnswerTelegram(clueId) {
@@ -261,7 +265,7 @@
             btn.innerText = "Enviando...";
 
             const message = `⚽ *Nueva respuesta enviada*\n\n📌 *Pista #${clueId}*\n💬 *Respuesta:* ${answerText}`;
-            const url = `https://api.telegram.org/bot${1454004285:AAEM8JAH-AiD4sqMWdJtYkSKPytPWGhHdJo}/sendMessage`;
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
             try {
                 const response = await fetch(url, {
@@ -292,7 +296,7 @@
             }
         }
 
-        renderClues();
+        document.addEventListener('DOMContentLoaded', renderClues);
     </script>
 </body>
 </html>
