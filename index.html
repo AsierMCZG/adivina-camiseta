@@ -252,50 +252,53 @@
         }
 
         async function sendClueAnswerTelegram(clueId) {
-            const inputField = document.getElementById(`input-clue-${clueId}`);
-            const statusMsg = document.getElementById(`status-clue-${clueId}`);
-            const btn = document.getElementById(`btn-clue-${clueId}`);
-            const answerText = inputField.value.trim();
+    const inputField = document.getElementById(`input-clue-${clueId}`);
+    const statusMsg = document.getElementById(`status-clue-${clueId}`);
+    const btn = document.getElementById(`btn-clue-${clueId}`);
+    const answerText = inputField.value.trim();
 
-            if (!answerText) {
-                alert("Escribe una respuesta antes de enviar.");
-                return;
-            }
+    if (!answerText) {
+        alert("Escribe una respuesta antes de enviar.");
+        return;
+    }
 
-            btn.disabled = true;
-            btn.innerText = "Enviando...";
+    btn.disabled = true;
+    btn.innerText = "Enviando...";
 
-            const message = `⚽ *Nueva respuesta enviada*\n\n📌 *Pista #${clueId}*\n💬 *Respuesta:* ${answerText}`;
-            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const text = `⚽ Nueva respuesta enviada\n\n📌 Pista #${clueId}\n💬 Respuesta: ${answerText}`;
+    
+    // Usamos URLSearchParams para evitar problemas de CORS/403 con JSON
+    const formData = new URLSearchParams();
+    formData.append('chat_id', TELEGRAM_CHAT_ID.trim());
+    formData.append('text', text);
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'Markdown'
-                    })
-                });
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN.trim()}/sendMessage`;
 
-                if (response.ok) {
-                    statusMsg.style.display = 'block';
-                    statusMsg.style.color = 'var(--green)';
-                    statusMsg.innerText = "✅ ¡Enviado correctamente!";
-                    inputField.value = '';
-                } else {
-                    throw new Error("Error en el envío");
-                }
-            } catch (error) {
-                statusMsg.style.display = 'block';
-                statusMsg.style.color = '#ff4d4d';
-                statusMsg.innerText = "❌ Error al enviar. Inténtalo de nuevo.";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Enviar directo 🚀";
-            }
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            statusMsg.style.display = 'block';
+            statusMsg.style.color = 'var(--green)';
+            statusMsg.innerText = "✅ ¡Enviado correctamente!";
+            inputField.value = '';
+        } else {
+            const errorData = await response.json();
+            console.error("Detalle del error de Telegram:", errorData);
+            throw new Error(errorData.description || "Error en el envío");
         }
+    } catch (error) {
+        statusMsg.style.display = 'block';
+        statusMsg.style.color = '#ff4d4d';
+        statusMsg.innerText = "❌ Error al enviar. Revisa la consola.";
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Enviar directo 🚀";
+    }
+}
 
         document.addEventListener('DOMContentLoaded', renderClues);
     </script>
