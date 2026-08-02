@@ -189,11 +189,11 @@
 
         function renderClues() {
             const container = document.getElementById('clues-container');
-            const today = new Date();
+            //const today = new Date();
             
             // Para probar el comportamiento simulando días pasados o futuros, 
             // puedes desmarcar la línea de abajo fijando la fecha que quieras:
-            // const today = new Date(2026, 7, 12); 
+            const today = new Date(2026, 7, 12); 
 
             const timeDiff = today - startDate;
             const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
@@ -219,7 +219,7 @@
                         </div>
                         <div class="clue-body">${clue.text}</div>
                         <div class="answer-box">
-                            <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué equipo o dato crees que es?..." />
+                            <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué equipo crees que es?" />
                             <button onclick="sendClueAnswer(${clue.id})">Enviar respuesta 📩</button>
                         </div>
                     `;
