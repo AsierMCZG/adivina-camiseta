@@ -199,7 +199,8 @@
         function renderClues() {
             try {
                 const container = document.getElementById('clues-container');
-                const today = new Date();
+                //const today = new Date();
+                const today = new Date(2026, 7, 22);
                 
                 const timeDiff = today - startDate;
                 const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
