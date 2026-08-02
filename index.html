@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío Futbolero ⚽ | Adivina la Camiseta</title>
+    <style>
+        :root {
+            --burgundy: #6b1d2f;
+            --light-blue: #95c8ec;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --input-bg: #2a2a2a;
+            --text-light: #f5f5f5;
+            --text-muted: #aaaaaa;
+            --gold: #ffb703;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 10px;
+        }
+
+        header h1 {
+            color: var(--light-blue);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .clue-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid var(--text-muted);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .clue-card.unlocked {
+            border-left-color: var(--light-blue);
+        }
+
+        .clue-card.today {
+            border-left-color: var(--gold);
+            box-shadow: 0 0 15px rgba(255, 183, 3, 0.3);
+            background: linear-gradient(145deg, #1e1e1e, #292419);
+        }
+
+        .clue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .clue-title {
+            font-weight: bold;
+            color: var(--light-blue);
+            font-size: 1.1rem;
+        }
+
+        .clue-card.today .clue-title {
+            color: var(--gold);
+        }
+
+        .clue-body {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .locked-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 0;
+        }
+
+        /* Formulario individual dentro de cada pista */
+        .answer-box {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .answer-box input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: var(--input-bg);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .answer-box input:focus {
+            border-color: var(--light-blue);
+        }
+
+        .answer-box button {
+            align-self: flex-end;
+            background-color: var(--burgundy);
+            color: #ffffff;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .answer-box button:hover {
+            background-color: #8c273e;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🏆 Misión: Adivina la Camiseta</h1>
+        <p>Una nueva pista cada día a partir del 11 de agosto de 2026</p>
+    </header>
+
+    <div class="container" id="clues-container">
+        <!-- Las pistas se renderizarán dinámicamente -->
+    </div>
+
+    <script>
+        const targetEmail = "asiermaka5@gmail.com";
+
+        const clues = [
+            { id: 1, text: "Nuestro primer partido oficial se jugó hace más de un siglo." },
+            { id: 2, text: "Aportó 3 jugadores a la Selección Española en los Juegos Olímpicos de 1920." },
+            { id: 3, text: "Fue uno de los diez clubes fundadores de Primera División." },
+            { id: 4, text: "Ha ganado la Copa de España antes de que existiera la Liga." },
+            { id: 5, text: "El club pertenece a un entrenador español muy laureado que sigue en activo." },
+            { id: 6, text: "Es uno de los clubes españoles que tiene vinculación con un equipo de la Premier League." },
+            { id: 7, text: "Ha eliminado de la Copa del Rey tanto al FC Barcelona como al Real Madrid en eliminatorias a doble partido." },
+            { id: 8, text: "Su estadio municipal actual se construyó sobre un terreno donde había un hipódromo." },
+            { id: 9, text: "Su primera equipación tiene los mismos colores que los del Real Unión." },
+            { id: 10, text: "Su segunda equipación comparte colores con la primera equipación del Aston Villa y del Burnley." }
+        ];
+
+        // Fecha de inicio: 11 de Agosto de 2026
+        const startDate = new Date(2026, 7, 11); 
+
+        function renderClues() {
+            const container = document.getElementById('clues-container');
+            const today = new Date();
+            
+            // Para probar el comportamiento simulando días pasados o futuros, 
+            // puedes desmarcar la línea de abajo fijando la fecha que quieras:
+            // const today = new Date(2026, 7, 12); 
+
+            const timeDiff = today - startDate;
+            const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+            clues.forEach((clue, index) => {
+                const unlockDate = new Date(startDate);
+                unlockDate.setDate(startDate.getDate() + index);
+
+                const isUnlocked = daysPassed >= index;
+                const isToday = daysPassed === index;
+
+                const dateString = unlockDate.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+                const card = document.createElement('div');
+                card.className = `clue-card ${isUnlocked ? 'unlocked' : ''} ${isToday ? 'today' : ''}`;
+
+                let contentHtml = '';
+                if (isUnlocked) {
+                    contentHtml = `
+                        <div class="clue-header">
+                            <span class="clue-title">Pista #${clue.id} ${isToday ? '⭐ (NUEVA HOY)' : ''}</span>
+                            <span>${dateString}</span>
+                        </div>
+                        <div class="clue-body">${clue.text}</div>
+                        <div class="answer-box">
+                            <input type="text" id="input-clue-${clue.id}" placeholder="¿Qué equipo o dato crees que es?..." />
+                            <button onclick="sendClueAnswer(${clue.id})">Enviar respuesta 📩</button>
+                        </div>
+                    `;
+                } else {
+                    contentHtml = `
+                        <div class="clue-header">
+                            <span class="clue-title">Pista #${clue.id}</span>
+                            <span>Disponible el: ${dateString}</span>
+                        </div>
+                        <div class="clue-body locked-content">
+                            🔒 <span>Pista bloqueada. Se desbloquea el ${dateString}</span>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = contentHtml;
+                container.appendChild(card);
+            });
+        }
+
+        function sendClueAnswer(clueId) {
+            const inputField = document.getElementById(`input-clue-${clueId}`);
+            const answerText = inputField.value.trim();
+
+            if (!answerText) {
+                alert("Escribe una respuesta antes de enviar.");
+                return;
+            }
+
+            const subject = encodeURIComponent(`Respuesta Pista #${clueId} - Desafío Camiseta`);
+            const body = encodeURIComponent(`Mi respuesta para la Pista #${clueId} es:\n\n"${answerText}"`);
+
+            window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+        }
+
+        renderClues();
+    </script>
+</body>
+</html>
