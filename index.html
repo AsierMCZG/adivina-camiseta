@@ -240,8 +240,10 @@
             });
         }
 
-        function sendClueAnswer(clueId) {
+        async function sendClueAnswer(clueId) {
             const inputField = document.getElementById(`input-clue-${clueId}`);
+            const statusMsg = document.getElementById(`status-clue-${clueId}`);
+            const btn = document.getElementById(`btn-clue-${clueId}`);
             const answerText = inputField.value.trim();
 
             if (!answerText) {
@@ -249,12 +251,40 @@
                 return;
             }
 
-            const subject = encodeURIComponent(`Respuesta Pista #${clueId} - Desafío Camiseta`);
-            const body = encodeURIComponent(`Mi respuesta para la Pista #${clueId} es:\n\n"${answerText}"`);
+            btn.disabled = true;
+            btn.innerText = "Enviando...";
 
-            window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+            const message = `⚽ *Nueva respuesta enviada*\n\n📌 *Pista #${clueId}*\n💬 *Respuesta:* ${answerText}`;
+            const url = `https://api.telegram.org/bot${1454004285:AAEM8JAH-AiD4sqMWdJtYkSKPytPWGhHdJo}/sendMessage`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                if (response.ok) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.style.color = 'var(--green)';
+                    statusMsg.innerText = "✅ ¡Enviado correctamente!";
+                    inputField.value = '';
+                } else {
+                    throw new Error("Error en el envío");
+                }
+            } catch (error) {
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = '#ff4d4d';
+                statusMsg.innerText = "❌ Error al enviar. Inténtalo de nuevo.";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Enviar directo 🚀";
+            }
         }
-
         renderClues();
     </script>
 </body>
