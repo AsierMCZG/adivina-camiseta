@@ -157,10 +157,11 @@
         }
 
         .status-msg {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             text-align: right;
-            margin-top: 4px;
+            margin-top: 6px;
             display: none;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -176,21 +177,20 @@
     </div>
 
     <script>
-        // PON AQUÍ TU TOKEN Y TU CHAT ID ENTRE LAS COMILLAS
         const TELEGRAM_BOT_TOKEN = "1454004285:AAEM8JAH-AiD4sqMWdJtYkSKPytPWGhHdJo"; 
         const TELEGRAM_CHAT_ID = "747752622";
 
         const clues = [
-            { id: 1, text: "Nuestro primer partido oficial se jugó hace más de un siglo." },
+            { id: 1, text: "Su estadio municipal actual se construyó sobre un terreno donde había un hipódromo." },
             { id: 2, text: "Aportó 3 jugadores a la Selección Española en los Juegos Olímpicos de 1920." },
-            { id: 3, text: "Fue uno de los diez clubes fundadores de Primera División." },
-            { id: 4, text: "Ha ganado la Copa de España antes de que existiera la Liga." },
-            { id: 5, text: "El club pertenece a un entrenador español muy laureado que sigue en activo." },
+            { id: 3, text: "Su segunda equipación comparte colores con la primera equipación del Aston Villa y del Burnley." },
+            { id: 4, text: "Ha eliminado de la Copa del Rey tanto al FC Barcelona como al Real Madrid en eliminatorias a doble partido." },
+            { id: 5, text: "Nuestro primer partido oficial se jugó hace más de un siglo." },
             { id: 6, text: "Es uno de los clubes españoles que tiene vinculación con un equipo de la Premier League." },
-            { id: 7, text: "Ha eliminado de la Copa del Rey tanto al FC Barcelona como al Real Madrid en eliminatorias a doble partido." },
-            { id: 8, text: "Su estadio municipal actual se construyó sobre un terreno donde había un hipódromo." },
-            { id: 9, text: "Su primera equipación tiene los mismos colores que los del Real Unión." },
-            { id: 10, text: "Su segunda equipación comparte colores con la primera equipación del Aston Villa y del Burnley." }
+            { id: 7, text: "Ha ganado la Copa de España antes de que existiera la Liga." },
+            { id: 8, text: "El club pertenece a un entrenador español muy laureado que sigue en activo." },
+            { id: 9, text: "Su primera equipación tiene los mismos colores que los del Burgos." },
+            { id: 10, text: "Fue uno de los diez clubes fundadores de Primera División." }
         ];
 
         // Fecha de inicio: 11 de Agosto de 2026
@@ -199,8 +199,8 @@
         function renderClues() {
             try {
                 const container = document.getElementById('clues-container');
-                //const today = new Date();
-                const today = new Date(2026, 7, 22);
+                // Para pruebas mantienes la fecha fija, en producción cambia a: const today = new Date();
+                const today = new Date(2026, 7, 22); 
                 
                 const timeDiff = today - startDate;
                 const daysPassed = Math.floor(timeDiff / (1000 * 3600 * 24));
@@ -251,54 +251,70 @@
             }
         }
 
-        async function sendClueAnswerTelegram(clueId) {
-    const inputField = document.getElementById(`input-clue-${clueId}`);
-    const statusMsg = document.getElementById(`status-clue-${clueId}`);
-    const btn = document.getElementById(`btn-clue-${clueId}`);
-    const answerText = inputField.value.trim();
+        // Función para validar si la respuesta es acertada
+        function isCorrectAnswer(text) {
+            const cleanText = text
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, ""); // Elimina tildes
 
-    if (!answerText) {
-        alert("Escribe una respuesta antes de enviar.");
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "Enviando...";
-
-    const text = `⚽ Nueva respuesta enviada\n\n📌 Pista #${clueId}\n💬 Respuesta: ${answerText}`;
-    
-    // Usamos URLSearchParams para evitar problemas de CORS/403 con JSON
-    const formData = new URLSearchParams();
-    formData.append('chat_id', TELEGRAM_CHAT_ID.trim());
-    formData.append('text', text);
-
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN.trim()}/sendMessage`;
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (response.ok) {
-            statusMsg.style.display = 'block';
-            statusMsg.style.color = 'var(--green)';
-            statusMsg.innerText = "✅ ¡Enviado correctamente!";
-            inputField.value = '';
-        } else {
-            const errorData = await response.json();
-            console.error("Detalle del error de Telegram:", errorData);
-            throw new Error(errorData.description || "Error en el envío");
+            const keywords = ["irun", "real union", "union"];
+            return keywords.some(keyword => cleanText.includes(keyword));
         }
-    } catch (error) {
-        statusMsg.style.display = 'block';
-        statusMsg.style.color = '#ff4d4d';
-        statusMsg.innerText = "❌ Error al enviar. Revisa la consola.";
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Enviar directo 🚀";
-    }
-}
+
+        async function sendClueAnswerTelegram(clueId) {
+            const inputField = document.getElementById(`input-clue-${clueId}`);
+            const statusMsg = document.getElementById(`status-clue-${clueId}`);
+            const btn = document.getElementById(`btn-clue-${clueId}`);
+            const answerText = inputField.value.trim();
+
+            if (!answerText) {
+                alert("Escribe una respuesta antes de enviar.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Enviando...";
+
+            const hit = isCorrectAnswer(answerText);
+            const text = `⚽ Nueva respuesta enviada\n\n📌 Pista #${clueId}\n💬 Respuesta: ${answerText}${hit ? '\n\n🎉 ¡HA ACERTADO EL CLUB!' : ''}`;
+            
+            const formData = new URLSearchParams();
+            formData.append('chat_id', TELEGRAM_CHAT_ID.trim());
+            formData.append('text', text);
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN.trim()}/sendMessage`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    statusMsg.style.display = 'block';
+                    if (hit) {
+                        statusMsg.style.color = 'var(--gold)';
+                        statusMsg.innerText = "🎉 ¡CORRECTO! ¡Has adivinado el equipo! ⚽🏆";
+                    } else {
+                        statusMsg.style.color = 'var(--green)';
+                        statusMsg.innerText = "✅ ¡Enviado correctamente!";
+                    }
+                    inputField.value = '';
+                } else {
+                    const errorData = await response.json();
+                    console.error("Detalle del error de Telegram:", errorData);
+                    throw new Error(errorData.description || "Error en el envío");
+                }
+            } catch (error) {
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = '#ff4d4d';
+                statusMsg.innerText = "❌ Error al enviar. Revisa la consola.";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Enviar directo 🚀";
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', renderClues);
     </script>
