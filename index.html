@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafío Futbolero ⚽ | Adivina la Camiseta</title>
+    <title>Adivina la Camiseta</title>
     <style>
         :root {
             --burgundy: #6b1d2f;
@@ -168,7 +168,7 @@
 <body>
 
     <header>
-        <h1>🏆 Misión: Adivina la Camiseta </h1>
+        <h1>Misión: Adivina la Camiseta </h1>
         <p>Una nueva pista cada día a partir del 11 de agosto de 2026 </p>
         <p>Puedes enviar solo una respuesta al día y te avisara en caso de acertala </p>
         <p>Se sincero con el juego y no busques las pistas en internet. Puedes preguntar a amigos </p>
@@ -223,7 +223,7 @@
                     if (isUnlocked) {
                         contentHtml = `
                             <div class="clue-header">
-                                <span class="clue-title">Pista #${clue.id} ${isToday ? '⭐ (NUEVA HOY)' : ''}</span>
+                                <span class="clue-title">Pista #${clue.id} ${isToday ? ' (NUEVA HOY)' : ''}</span>
                                 <span>${dateString}</span>
                             </div>
                             <div class="clue-body">${clue.text}</div>
@@ -289,7 +289,7 @@
             btn.innerText = "Enviando...";
 
             const hit = isCorrectAnswer(answerText);
-            const text = `⚽ Nueva respuesta enviada\n\n📌 Pista #${clueId}\n💬 Respuesta: ${answerText}${hit ? '\n\n🎉 ¡HA ACERTADO EL CLUB!' : ''}`;
+            const text = `Nueva respuesta enviada\n\n Pista #${clueId}\n💬 Respuesta: ${answerText}${hit ? '\n\n' : ''}`;
             
             const formData = new URLSearchParams();
             formData.append('chat_id', TELEGRAM_CHAT_ID.trim());
@@ -310,10 +310,10 @@
                     statusMsg.style.display = 'block';
                     if (hit) {
                         statusMsg.style.color = 'var(--gold)';
-                        statusMsg.innerText = "🎉 ¡CORRECTO! ¡Has adivinado el equipo! ⚽🏆";
+                        statusMsg.innerText = "¡Enviado! Tu respuesta diaria ha sido registrada.";
                     } else {
                         statusMsg.style.color = 'var(--green)';
-                        statusMsg.innerText = "✅ ¡Enviado! Tu respuesta diaria ha sido registrada.";
+                        statusMsg.innerText = "¡Enviado! Tu respuesta diaria ha sido registrada.";
                     }
                     inputField.value = '';
                 } else {
@@ -324,10 +324,10 @@
             } catch (error) {
                 statusMsg.style.display = 'block';
                 statusMsg.style.color = '#ff4d4d';
-                statusMsg.innerText = "❌ Error al enviar. Revisa la consola.";
+                statusMsg.innerText = "❌ Error al enviar.";
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Enviar directo 🚀";
+                btn.innerText = "Enviar respuesta";
             }
         }
 
