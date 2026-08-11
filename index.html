@@ -259,7 +259,7 @@
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
 
-            const keywords = ["atzo", "egingo", "nuen"];
+            const keywords = ["real union", "irun", "real union de irun"];
             return keywords.some(keyword => cleanText.includes(keyword));
         }
 
@@ -310,7 +310,7 @@
                     statusMsg.style.display = 'block';
                     if (hit) {
                         statusMsg.style.color = 'var(--gold)';
-                        statusMsg.innerText = "¡Enviado! Tu respuesta diaria ha sido registrada.";
+                        statusMsg.innerText = "¡Enviado! ¡¡¡Respuesta Correcta!!!";
                     } else {
                         statusMsg.style.color = 'var(--green)';
                         statusMsg.innerText = "¡Enviado! Tu respuesta diaria ha sido registrada.";
