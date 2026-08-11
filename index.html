@@ -240,7 +240,7 @@
                                 <span>Disponible el: ${dateString}</span>
                             </div>
                             <div class="clue-body locked-content">
-                                🔒 <span>Pista bloqueada. Se desbloquea el ${dateString}</span>
+                                 <span>Pista bloqueada. Se desbloquea el ${dateString}</span>
                             </div>
                         `;
                     }
@@ -324,7 +324,7 @@
             } catch (error) {
                 statusMsg.style.display = 'block';
                 statusMsg.style.color = '#ff4d4d';
-                statusMsg.innerText = "❌ Error al enviar.";
+                statusMsg.innerText = " Error al enviar.";
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Enviar respuesta";
