@@ -259,7 +259,7 @@
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "");
 
-            const keywords = ["irun", "real union", "union"];
+            const keywords = ["atzo", "egingo", "nuen"];
             return keywords.some(keyword => cleanText.includes(keyword));
         }
 
@@ -281,7 +281,7 @@
             if (lastSubmissionDate === todayStr) {
                 statusMsg.style.display = 'block';
                 statusMsg.style.color = '#ff9800';
-                statusMsg.innerText = "⏳ Ya has enviado una respuesta hoy. ¡Vuelve mañana!";
+                statusMsg.innerText = "Ya has enviado una respuesta hoy. ¡Vuelve mañana!";
                 return;
             }
 
@@ -289,7 +289,7 @@
             btn.innerText = "Enviando...";
 
             const hit = isCorrectAnswer(answerText);
-            const text = `Nueva respuesta enviada\n\n Pista #${clueId}\n💬 Respuesta: ${answerText}${hit ? '\n\n' : ''}`;
+            const text = `Nueva respuesta enviada\n\n Pista #${clueId}\n Respuesta: ${answerText}${hit ? '\n\n' : ''}`;
             
             const formData = new URLSearchParams();
             formData.append('chat_id', TELEGRAM_CHAT_ID.trim());
